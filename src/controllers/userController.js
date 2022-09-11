@@ -61,7 +61,6 @@ class UserController {
 
     async setIsOnline(req, res, next) {
         const {login, isOnline} = req.body;
-        console.log(req.body.isOnline);
 
         if(isOnline == undefined || isOnline === null || !login) {
             return next(ApiError.badRequest('Not all params passed.'));

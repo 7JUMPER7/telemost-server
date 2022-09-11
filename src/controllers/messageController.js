@@ -1,19 +1,42 @@
 const ApiError = require("../error/ApiError");
 const { Message, User } = require("../models/models");
 const CryptoJS = require("crypto-js");
+const bcrypt = require('bcrypt');
 
 class MessageController {
     async getAll(req, res, next) {
-        try {
-            const messages = await Message.findAll({include: [{model: User, attributes: ['name', 'login', 'isOnline']}]});
-            
-            for(let message of messages) {
-                message.text = CryptoJS.AES.decrypt(message.text, process.env.SECRET_KEY).toString(CryptoJS.enc.Utf8);
-            }
+        const {login, password} = req.body;
 
-            return res.json(messages);
-        } catch(e) {
-            next(ApiError.badRequest(e.message));
+        if(!login || !password) {
+            return next(ApiError.badRequest('Not all params passed.'));
+        } 
+
+        const user = await User.findOne({where: {login}});
+
+        if(!user) {
+            return next(ApiError.badRequest('User not found'));
+        } else {
+            if(password !== user.password) {
+                return next(ApiError.badRequest('Password is incorrect'));
+            }
+    
+            try {
+                let messages = await Message.findAll({include: [{model: User, attributes: ['name', 'login', 'isOnline']}], raw: true});
+                
+                messages = messages.map((message) => {
+                    message.text = CryptoJS.AES.decrypt(message.text, process.env.SECRET_KEY).toString(CryptoJS.enc.Utf8);
+                    if(message.userId === user.id) {
+                        message.isUserMessage = true;
+                    } else {
+                        message.isUserMessage = false;
+                    }
+                    return message;
+                });
+    
+                return res.json(messages);
+            } catch(e) {
+                next(ApiError.badRequest(e.message));
+            }
         }
     }
 
