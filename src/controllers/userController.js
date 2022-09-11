@@ -28,6 +28,9 @@ class UserController {
             const user = await User.create({login: login.toLowerCase(), password: hashPassword, name, isOnline: true});
             return res.json(user);
         } catch(e) {
+            if(e.message === 'Validation error') {
+                return next(ApiError.badRequest('Login already taken'));
+            }
             next(ApiError.badRequest(e.message));
         }
     }
@@ -46,7 +49,7 @@ class UserController {
                 const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
                 if(isPasswordCorrect) {
-                    return res.json({ok: true});
+                    return res.json({ok: true, login: user.login, password: user.password});
                 }
                 return next(ApiError.badRequest('Password is incorrect'));
             }

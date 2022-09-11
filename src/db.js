@@ -9,12 +9,12 @@ module.exports = new Sequelize(
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
         timezone: 'utc',
-        dialectOptions: {
-            ssl: {
-                require: true,
-                rejectUnauthorized: false,
-            }
-        },
-        logging: false,
+        // dialectOptions: {
+        //     ssl: {
+        //         require: true,
+        //         rejectUnauthorized: false,
+        //     }
+        // },
+        // logging: false,
     }
 );
