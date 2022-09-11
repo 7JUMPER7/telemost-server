@@ -49,7 +49,7 @@ class UserController {
                 const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
                 if(isPasswordCorrect) {
-                    return res.json({ok: true, login: user.login, password: user.password});
+                    return res.json({ok: true, name: user.name, login: user.login, password: user.password});
                 }
                 return next(ApiError.badRequest('Password is incorrect'));
             }
