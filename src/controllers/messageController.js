@@ -41,9 +41,9 @@ class MessageController {
     }
 
     async add(req, res, next) {
-        const {login, text} = req.body;
+        const {user, text} = req.body;
 
-        if(!login || !text) {
+        if(!user || !user.login || !text) {
             return next(ApiError.badRequest('Not all params passed.'));
         } 
 
