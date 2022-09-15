@@ -48,11 +48,11 @@ class MessageController {
         } 
 
         try {
-            const user = await User.findOne({where: {login: user.login.toLowerCase()}});
+            const DBuser = await User.findOne({where: {login: user.login.toLowerCase()}});
 
-            if(user) {
+            if(DBuser) {
                 const encryptedText = CryptoJS.AES.encrypt(text, process.env.SECRET_KEY).toString();
-                const message = await Message.create({text: encryptedText, userId: user.id});
+                const message = await Message.create({text: encryptedText, userId: DBuser.id});
                 return res.json(message);
             }
             return next(ApiError.badRequest('User not found.'));
