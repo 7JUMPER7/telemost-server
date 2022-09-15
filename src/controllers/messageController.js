@@ -48,7 +48,7 @@ class MessageController {
         } 
 
         try {
-            const user = await User.findOne({where: {login: login.toLowerCase()}});
+            const user = await User.findOne({where: {login: user.login.toLowerCase()}});
 
             if(user) {
                 const encryptedText = CryptoJS.AES.encrypt(text, process.env.SECRET_KEY).toString();
